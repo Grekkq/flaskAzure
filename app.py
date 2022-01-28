@@ -32,23 +32,28 @@ def create_app(test_config=None):
         container.create_item(body={link_item})
 
     def read_items(container):
-        print('\nReading all items in a container\n')
+        print("\nReading all items in a container\n")
 
         # NOTE: Use MaxItemCount on Options to control how many items come back per trip to the server
         #       Important to handle throttles whenever you are doing operations such as this that might
         #       result in a 429 (throttled request)
         item_list = list(container.read_all_items(max_item_count=10))
 
-        print('Found {0} items'.format(item_list.__len__()))
+        print("Found {0} items".format(item_list.__len__()))
 
         for doc in item_list:
-            print('Item Id: {0}'.format(doc.get('id')))
+            print("Item Id: {0}".format(doc.get("id")))
 
         return item_list
 
     @app.route("/")
     def home():
-        client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY}, user_agent="CosmosDBPythonQuickstart", user_agent_overwrite=True)
+        client = cosmos_client.CosmosClient(
+            HOST,
+            {"masterKey": MASTER_KEY},
+            user_agent="CosmosDBPythonQuickstart",
+            user_agent_overwrite=True,
+        )
         db = client.get_database_client(DATABASE_ID)
         container = db.get_container_client(CONTAINER_ID)
         return read_items(container)
@@ -59,10 +64,20 @@ def create_app(test_config=None):
 
     @app.route("/createItem")
     def create_item():
-        client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY}, user_agent="CosmosDBPythonQuickstart", user_agent_overwrite=True)
+        client = cosmos_client.CosmosClient(
+            HOST,
+            {"masterKey": MASTER_KEY},
+            user_agent="CosmosDBPythonQuickstart",
+            user_agent_overwrite=True,
+        )
         db = client.get_database_client(DATABASE_ID)
         container = db.get_container_client(CONTAINER_ID)
         create_items(container)
         return "Created!"
 
     return app
+
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run()
