@@ -1,5 +1,5 @@
 import uuid
-import config
+import flaszkaazure.config as config
 from flask import Flask, render_template
 from pathlib import Path
 import azure.cosmos.documents as documents
