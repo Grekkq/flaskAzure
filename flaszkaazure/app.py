@@ -1,6 +1,6 @@
 import uuid
 import config
-from flask import Flask
+from flask import Flask, render_template
 from pathlib import Path
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
@@ -69,7 +69,7 @@ def create_app(test_config=None):
 
     @app.route("/hello")
     def hello():
-        return "No hej!"
+        return render_template("hello.html")
 
     @app.route("/createItem")
     def create_item():
