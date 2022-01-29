@@ -29,7 +29,7 @@ def create_app(test_config=None):
             "name": "ciekawylink1",
             "link": "google.com",
         }
-        container.create_item(body={link_item})
+        container.create_item(body=link_item)
 
     def read_items(container):
         print("\nReading all items in a container\n")
@@ -38,11 +38,11 @@ def create_app(test_config=None):
         #       Important to handle throttles whenever you are doing operations such as this that might
         #       result in a 429 (throttled request)
         item_list = list(container.read_all_items(max_item_count=10))
-
-        print("Found {0} items".format(item_list.__len__()))
+        items_string = ""
+        items_string += f"Found {item_list.__len__()} items\n"
 
         for doc in item_list:
-            print("Item Id: {0}".format(doc.get("id")))
+            items_string += f"Item Id: {doc.get('id')}\n"
 
         return item_list
 
