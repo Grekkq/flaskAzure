@@ -25,8 +25,7 @@ def create_app(test_config=None):
     def create_items(container):
         print("\nCreating item\n")
         link_item = {
-            # "id": "1",
-            "name": "ciekawylink1",
+            "name": "ciekawylink2",
             "link": "google.com",
         }
         container.create_item(body=link_item)
