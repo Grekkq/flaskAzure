@@ -1,3 +1,4 @@
+import uuid
 import config
 from flask import Flask
 from pathlib import Path
@@ -25,6 +26,7 @@ def create_app(test_config=None):
     def create_items(container):
         print("\nCreating item\n")
         link_item = {
+            "id": f"{uuid.uuid4()}",
             "name": "ciekawylink2",
             "link": "google.com",
         }
