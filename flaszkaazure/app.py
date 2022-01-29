@@ -29,6 +29,14 @@ def create_app(test_config=None):
             "id": f"{uuid.uuid4()}",
             "name": "ciekawylink2",
             "link": "google.com",
+            "category": "generic",
+        }
+        container.create_item(body=link_item)
+        link_item = {
+            "id": f"{uuid.uuid4()}",
+            "name": "YT",
+            "link": "youtube.com",
+            "category": "fun",
         }
         container.create_item(body=link_item)
 
