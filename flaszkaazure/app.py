@@ -4,6 +4,8 @@ from flask import Flask, render_template
 from pathlib import Path
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
+from collections import defaultdict
+
 
 HOST = config.settings["host"]
 MASTER_KEY = config.settings["master_key"]
@@ -28,32 +30,30 @@ def create_app(test_config=None):
         link_item = {
             "id": f"{uuid.uuid4()}",
             "name": "ciekawylink2",
-            "link": "google.com",
+            "url": "google.com",
             "category": "generic",
         }
         container.create_item(body=link_item)
         link_item = {
             "id": f"{uuid.uuid4()}",
             "name": "YT",
-            "link": "youtube.com",
+            "url": "youtube.com",
             "category": "fun",
         }
         container.create_item(body=link_item)
 
-    def read_items(container):
-        print("\nReading all items in a container\n")
-
+    def sorted_links(container):
         # NOTE: Use MaxItemCount on Options to control how many items come back per trip to the server
         #       Important to handle throttles whenever you are doing operations such as this that might
         #       result in a 429 (throttled request)
-        item_list = list(container.read_all_items(max_item_count=10))
-        items_string = ""
-        items_string += f"Found {item_list.__len__()} items\n"
+        links = list(container.read_all_items(max_item_count=10))
+        print(f"Found {links.__len__()} links total\n")
 
-        for doc in item_list:
-            items_string += f"Item Id: {doc.get('id')}\n"
+        sorted_links = defaultdict(list)
+        for link in links:
+            sorted_links[link.category].append(link)
 
-        return items_string
+        return sorted_links
 
     @app.route("/")
     def home():
@@ -65,7 +65,21 @@ def create_app(test_config=None):
         )
         db = client.get_database_client(DATABASE_ID)
         container = db.get_container_client(CONTAINER_ID)
-        return read_items(container)
+        return render_template("home/index.html", links=sorted_links(container))
+
+    @app.route("/base")
+    def base():
+        links = (
+            {
+                "Fun": [{"url": "youtube.com", "name": "YT"}],
+                "Training": [
+                    {"url": "pluarsight", "name": "pluralsight"},
+                    {"url": "youtube.com", "name": "YT"},
+                ],
+            },
+        )
+
+        return render_template("home/index.html", links=links)
 
     @app.route("/hello")
     def hello():
