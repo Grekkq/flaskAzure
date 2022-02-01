@@ -1,3 +1,4 @@
+import sys
 import uuid
 import flaszkaazure.config as config
 from flask import Flask, render_template
@@ -5,6 +6,7 @@ from pathlib import Path
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 from collections import defaultdict
+from flask import request, redirect
 
 
 HOST = config.settings["host"]
@@ -51,7 +53,7 @@ def create_app(test_config=None):
 
         sorted_links = defaultdict(list)
         for link in links:
-            sorted_links[link.category].append(link)
+            sorted_links[link.get("category")].append(link)
 
         return sorted_links
 
@@ -65,21 +67,32 @@ def create_app(test_config=None):
         )
         db = client.get_database_client(DATABASE_ID)
         container = db.get_container_client(CONTAINER_ID)
-        return render_template("home/index.html", links=sorted_links(container))
+        sorted = sorted_links(container)
+        print("home page")
+        return render_template("home/index.html", links=sorted)
 
-    @app.route("/base")
-    def base():
-        links = (
-            {
-                "Fun": [{"url": "youtube.com", "name": "YT"}],
-                "Training": [
-                    {"url": "pluarsight", "name": "pluralsight"},
-                    {"url": "youtube.com", "name": "YT"},
-                ],
-            },
+    @app.route("/delete_category", methods=["GET", "POST"])
+    def delete_category():
+        print(f"remove {request.form.get('category')}")
+        return redirect("/")
+
+    @app.route("/add_new_link", methods=["GET", "POST"])
+    def add_new_link():
+        # TODO: Dynamically populate categories
+        return render_template(
+            "home/add-new-link.html",
+            category=request.form.get("category"),
+            categories=["Fun", "Training", "internal"],
         )
 
-        return render_template("home/index.html", links=links)
+    @app.route("/submit_add_new_link", methods=["GET", "POST"])
+    def submit_add_new_link():
+        # TODO: save passsed data to db
+        print(
+            f"add {request.form.get('category')} {request.form.get('name')} {request.form.get('url')}",
+            file=sys.stderr,
+        )
+        return redirect("/")
 
     @app.route("/hello")
     def hello():

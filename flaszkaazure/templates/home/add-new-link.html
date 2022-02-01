@@ -1,0 +1,77 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} New link {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card">
+
+      <form role="form" method="post" action="{{url_for('submit_add_new_link')}}">
+
+        <div class="card-header">
+          <h5 class="title">New link</h5>
+
+          <h6 class="card-category">
+            Fill out data to add new link to list
+          </h6>
+        </div>
+
+        <div class="card-body">
+
+          <div class="row">
+
+            <div class="col-md-3 px-md-1">
+              <div class="form-group">
+                <label>Display name</label>
+                <input class="form-control" name="name" required="" type="text" value="">
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+
+            <div class="col-md-3 px-md-1">
+              <div class="form-group">
+                <label>Site URL</label>
+                <input class="form-control" name="url" required="" type="text" value="">
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+
+            <div class="col-md-3 px-md-1">
+              <div class="form-group">
+                <label>Category</label>
+                <input class="form-control" type="text" name="category" list="availableCategories" value="{{category}}">
+                <datalist id="availableCategories">
+                  {%for item in categories%}
+                  <option value="{{item}}">
+                    {% endfor %}
+                </datalist>
+              </div>
+            </div>
+
+
+          </div>
+
+        </div>
+        <div class="card-footer">
+          <button type="submit" class="btn btn-fill btn-primary">Add new link</button>
+          &nbsp; &nbsp;
+          Missclick? <a href="javascript:history.back()" class="text-primary">Go back!</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+{% endblock content %}
+
+{% block javascripts %}{% endblock javascripts %}
