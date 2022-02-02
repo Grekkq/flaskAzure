@@ -49,7 +49,6 @@ def create_app(test_config=None):
 
     @app.route("/add_new_link", methods=["GET", "POST"])
     def add_new_link():
-        # TODO: Dynamically populate categories
         return render_template(
             "content/add-new-link.html",
             category=request.form.get("category"),
