@@ -2,8 +2,6 @@ import sys
 import uuid
 import flaszkaazure.config as config
 from flask import Flask, render_template
-from pathlib import Path
-import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 from collections import defaultdict
 from flask import request, redirect
@@ -16,16 +14,7 @@ CONTAINER_ID = config.settings["container_id"]
 
 
 def create_app(test_config=None):
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY="dev",
-        # DATABASE=Path.joinpath(app.instance_path, 'flaskr.sqlite'),
-    )
-
-    if test_config is None:
-        app.config.from_pyfile("config.py", silent=True)
-    else:
-        app.config.from_mapping(test_config)
+    app = Flask(__name__)
 
     def create_items(container):
         print("\nCreating item\n")
@@ -69,7 +58,11 @@ def create_app(test_config=None):
         container = db.get_container_client(CONTAINER_ID)
         sorted = sorted_links(container)
         print("home page")
-        return render_template("home/index.html", links=sorted)
+        return render_template("content/index.html", links=sorted)
+
+    @app.route("/deactivations.html")
+    def deactivations():
+        return render_template("content/deactivations.html")
 
     @app.route("/delete_category", methods=["GET", "POST"])
     def delete_category():
@@ -80,23 +73,19 @@ def create_app(test_config=None):
     def add_new_link():
         # TODO: Dynamically populate categories
         return render_template(
-            "home/add-new-link.html",
+            "content/add-new-link.html",
             category=request.form.get("category"),
             categories=["Fun", "Training", "internal"],
         )
 
     @app.route("/submit_add_new_link", methods=["GET", "POST"])
     def submit_add_new_link():
-        # TODO: save passsed data to db
+        # TODO: save user data to db
         print(
             f"add {request.form.get('category')} {request.form.get('name')} {request.form.get('url')}",
             file=sys.stderr,
         )
         return redirect("/")
-
-    @app.route("/hello")
-    def hello():
-        return render_template("hello.html")
 
     @app.route("/createItem")
     def create_item():
@@ -110,5 +99,13 @@ def create_app(test_config=None):
         container = db.get_container_client(CONTAINER_ID)
         create_items(container)
         return "Created!"
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template("content/page-404.html"), 404
+
+    @app.errorhandler(500)
+    def server_error(e):
+        return render_template("content/page-500.html"), 500
 
     return app
