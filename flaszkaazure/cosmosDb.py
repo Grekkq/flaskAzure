@@ -35,7 +35,9 @@ class CosmosDb(DataRepository):
 
     def delete_links_by_category(self, category: str):
         for link in self.get_all_links():
-            link = LinkDTO(link.get("name"), link.get("url"), link.get("category"), link.get("id"))
+            link = LinkDTO(
+                link.get("name"), link.get("url"), link.get("category"), link.get("id")
+            )
             if link.category == category:
                 self.delete_link(link)
 
