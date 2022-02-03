@@ -3,7 +3,36 @@
 {% block title %} Dashboard {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<style>
+  .form-like-text {
+    background: none;
+    color: var(--primary);
+    border: none;
+    padding: 0;
+    font: inherit;
+    outline: inherit;
+  }
+
+  .position-on-right {
+    position: absolute;
+    right: 20px;
+  }
+
+  .position-center {
+    position: absolute;
+    right: 50%;
+  }
+
+  .link-inline {
+    float: left;
+  }
+
+  div.card-body ul {
+    list-style-type: none;
+  }
+</style>
+{% endblock stylesheets %}
 
 {% block content %}
 <form action="" method="POST" id="form1" style="display: none; position: absolute; z-index: 2; align-items: center;">
@@ -37,8 +66,22 @@
       <div class="card-body">
         <ul>
           {% for link in category_content %}
-          <li><a href="{{ link.url }}">{{ link.name }}</a></li>
+          <li><a class="link-inline" href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.name }}</a>
+            <form action="{{url_for('delete_link')}}" method="post">
+              <input type="hidden" name="link" value="{{link}}">
+              <button class="form-like-text position-on-right" type="submit"><i
+                  class="tim-icons icon-trash-simple"></i></button>
+            </form>
+          </li>
+          <br>
           {% endfor %}
+          <li>
+            <form action="{{url_for('add_new_link')}}" method="post">
+              <input type="hidden" name="category" value="{{category_name}}">
+              <button class="form-like-text position-center" type="submit"><i
+                  class="tim-icons icon-simple-add"></i></button>
+            </form>
+          </li>
         </ul>
       </div>
     </div>

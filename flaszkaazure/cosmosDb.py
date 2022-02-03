@@ -35,9 +35,9 @@ class CosmosDb(DataRepository):
 
     def delete_links_by_category(self, category: str):
         for link in self.get_all_links():
-            link = LinkDTO(
-                link.get("name"), link.get("url"), link.get("category"), link.get("id")
-            )
+            # link = LinkDTO(
+            #     link.get("name"), link.get("url"), link.get("category"), link.get("id")
+            # )
             if link.category == category:
                 self.delete_link(link)
 
@@ -45,7 +45,17 @@ class CosmosDb(DataRepository):
         # NOTE: Use MaxItemCount on Options to control how many items come back per trip to the server
         #       Important to handle throttles whenever you are doing operations such as this that might
         #       result in a 429 (throttled request)
-        return list(self.link_container.read_all_items(max_item_count=10))
+        links = []
+        for item in list(self.link_container.read_all_items(max_item_count=10)):
+            links.append(
+                LinkDTO(
+                    item.get("name"),
+                    item.get("url"),
+                    item.get("category"),
+                    item.get("id"),
+                )
+            )
+        return links
 
     def get_all_categories(self):
         query_result = self.link_container.query_items(
