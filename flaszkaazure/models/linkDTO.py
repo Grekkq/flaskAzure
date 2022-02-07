@@ -12,5 +12,5 @@ class LinkDTO:
     def __post_init__(self):
         if self.id == None:
             self.id = uuid.uuid4().__str__()
-        if not self.url.startswith(("https://www.", "http://www.")):
-            self.url = "https://www." + self.url
+        if not self.url.startswith(("https://www.", "http://www.", "https://", "http://")):
+            self.url = "https://" + self.url

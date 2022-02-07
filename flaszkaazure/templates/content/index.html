@@ -68,7 +68,10 @@
           {% for link in category_content %}
           <li><a class="link-inline" href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.name }}</a>
             <form action="{{url_for('delete_link')}}" method="post">
-              <input type="hidden" name="link" value="{{link}}">
+              <input type="hidden" name="id" value="{{link.id}}">
+              <input type="hidden" name="name" value="{{link.name}}">
+              <input type="hidden" name="url" value="{{link.url}}">
+              <input type="hidden" name="category" value="{{link.category}}">
               <button class="form-like-text position-on-right" type="submit"><i
                   class="tim-icons icon-trash-simple"></i></button>
             </form>

@@ -39,7 +39,8 @@ def create_app(test_config=None):
 
     @app.route("/delete_link", methods=["GET", "POST"])
     def delete_link():
-        CosmosDb().delete_link(request.form.get("link"))
+        link = LinkDTO(request.form.get("name"), request.form.get("url"), request.form.get("category"), request.form.get("id"))
+        CosmosDb().delete_link(link)
         return redirect("/")
 
     @app.route("/add_new_link", methods=["GET", "POST"])
