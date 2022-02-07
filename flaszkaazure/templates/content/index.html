@@ -58,7 +58,8 @@
             </form>
             <form action="{{url_for('delete_category')}}" method="post">
               <input type="hidden" name="category" value="{{category_name}}">
-              <input class="dropdown-item" type="submit" value="Delete {{category_name}}">
+              <input class="dropdown-item" type="submit" value="Delete {{category_name}}"
+                onClick="return generalDeleteConfirmSubmit()">
             </form>
           </div>
         </div>
@@ -72,8 +73,8 @@
               <input type="hidden" name="name" value="{{link.name}}">
               <input type="hidden" name="url" value="{{link.url}}">
               <input type="hidden" name="category" value="{{link.category}}">
-              <button class="form-like-text position-on-right" type="submit"><i
-                  class="tim-icons icon-trash-simple"></i></button>
+              <button class="form-like-text position-on-right" type="submit"
+                onClick="return generalDeleteConfirmSubmit()"><i class="tim-icons icon-trash-simple"></i></button>
             </form>
           </li>
           <br>
@@ -99,8 +100,14 @@
 {% block javascripts %}
 <script>
   $(document).ready(function () {
-    // Javascript method's body can be found in assets/js/demos.js
 
   });
+  function generalDeleteConfirmSubmit() {
+    var agree = confirm("Are you sure you want to delete this?");
+    if (agree)
+      return true;
+    else
+      return false;
+  }
 </script>
 {% endblock javascripts %}
