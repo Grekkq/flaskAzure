@@ -1,5 +1,7 @@
 from collections import defaultdict
 
+import requests
+from bs4 import BeautifulSoup
 from flask import Flask, redirect, render_template, request
 
 from flaszkaazure.cosmosDb import CosmosDb
@@ -65,5 +67,23 @@ def create_app(test_config=None):
         )
         CosmosDb().add_link(new_link)
         return redirect("/")
+
+    @app.route("/get_grade", methods=["GET", "POST"])
+    def get_grade():
+        plate: str = request.args.get("plate")
+        plate = plate.upper()
+        base_url: str = "https://tablica-rejestracyjna.pl/"
+        # use headers to mimic browser, to hopefully not get banned xd
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+        }
+        response = requests.get(base_url + plate, headers=headers)
+        if response.status_code != 200:
+            return f"Plate {plate} not found in external db"
+
+        content = BeautifulSoup(response.content)
+        thumb_up = int(content.find("div", {"id": "cnt1"}).text)
+        thumb_down = int(content.find("div", {"id": "cnt-1"}).text)
+        return f"+{thumb_up}/-{thumb_down}={thumb_up/thumb_down}"
 
     return app
